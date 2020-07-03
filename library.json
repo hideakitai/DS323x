@@ -1,0 +1,20 @@
+{
+    "name": "DS323x",
+    "keywords": "i2c,wire,rtc",
+    "description": "Arduino library for DS3231/DS3232 Extremely Accurate I2C-Integrated RTC/TCXO/Crystal",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/hideakitai/DS323x.git"
+    },
+    "authors":
+    {
+        "name": "Hideaki Tai",
+        "url": "https://github.com/hideakitai",
+        "maintainer": true
+    },
+    "version": "0.1.0",
+    "license": "MIT",
+    "frameworks": "arduino",
+    "platforms": "*"
+}
