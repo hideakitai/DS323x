@@ -88,7 +88,7 @@
             uint8_t leap;
             for (yOff = 0; ; ++yOff) {
                 leap = yOff % 4 == 0;
-                if (days < 365 + leap)
+                if (days < 365 + (uint16_t)leap)
                 break;
                 days -= 365 + leap;
             }
