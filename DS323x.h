@@ -409,7 +409,13 @@ namespace ds323x {
         int8_t agingOffset() { return (int8_t)readByte(Reg::AGING_OFFSET); }
         bool agingOffset(const int8_t o) { return writeByte(Reg::AGING_OFFSET, (uint8_t)o); }
 
-        float temperature() { return ((float)(((uint16_t)readByte(Reg::MSB_TEMP) << 8) | (uint16_t)readByte(Reg::LSB_TEMP) >> 6)) * 0.25f; }
+        float temperature() {
+            uint8_t val = readByte(Reg::MSB_TEMP);
+            bool sign = bool(val & 0x80);
+            float temp = float(sign ? -(~val + 1) : val);
+            temp += float(readByte(Reg::LSB_TEMP) >> 6) * 0.25f;
+            return temp;
+        }
 
 
     private:
