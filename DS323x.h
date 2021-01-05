@@ -514,7 +514,7 @@ namespace ds323x {
             return count;
         }
 
-        int8_t readWords(const Reg reg, const uint8_t size, const uint16_t *data)
+        int8_t readWords(const Reg reg, const uint8_t size, uint16_t *data)
         {
             wire->beginTransmission(I2C_ADDR);
             wire->write((uint8_t)reg);
@@ -531,7 +531,7 @@ namespace ds323x {
             return count;
         }
 
-        int8_t readWords(const Reg reg, const uint8_t size, const uint16_t *data, const uint16_t* mask)
+        int8_t readWords(const Reg reg, const uint8_t size, uint16_t *data, const uint16_t* mask)
         {
             wire->beginTransmission(I2C_ADDR);
             wire->write((uint8_t)reg);
@@ -613,14 +613,15 @@ namespace ds323x {
         bool writeWords(const Reg reg, const uint8_t size, const uint16_t* data, const uint16_t* mask = nullptr)
         {
             uint16_t r[size];
+            uint16_t s[size];
             readWords(reg, size, r);
             wire->beginTransmission(I2C_ADDR);
             wire->write((uint8_t)reg);
             for (uint8_t i = 0; i < size; i++)
             {
-                data[i] = (data[i] & mask[i]) | (r[i] & ~mask[i]);
-                wire->write((uint8_t)((data[i] >> 8) & 0x00FF));
-                wire->write((uint8_t)((data[i] >> 0) & 0x00FF));
+                s[i] = (data[i] & mask[i]) | (r[i] & ~mask[i]);
+                wire->write((uint8_t)((s[i] >> 8) & 0x00FF));
+                wire->write((uint8_t)((s[i] >> 0) & 0x00FF));
             }
             status_ = wire->endTransmission();
             return (status_ == 0);
