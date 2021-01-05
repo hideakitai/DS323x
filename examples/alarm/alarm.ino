@@ -20,9 +20,9 @@ void setup()
     rtc.attach(Wire);
 
     // set alarm1
-    rtc.format(DS323x::AlarmSel::A1, DS323x::Format::H12);
-    rtc.dydt(DS323x::AlarmSel::A1, DS323x::DYDT::DATE);
-    rtc.ampm(DS323x::AlarmSel::A1, DS323x::AMPM::AM);
+    rtc.format(DS323x::AlarmSel::A1, DS323x::Format::HOUR_12);
+    rtc.dydt(DS323x::AlarmSel::A1, DS323x::DYDT::DYDT_DATE);
+    rtc.ampm(DS323x::AlarmSel::A1, DS323x::AMPM::AMPM_AM);
     rtc.weekday(DS323x::AlarmSel::A1, 21);
     rtc.hour(DS323x::AlarmSel::A1, 12);
     rtc.minute(DS323x::AlarmSel::A1, 34);
@@ -35,9 +35,9 @@ void setup()
     Serial.println((uint8_t)rtc.rateA1());
 
     // set alarm2
-    rtc.format(DS323x::AlarmSel::A2, DS323x::Format::H24);
-    rtc.dydt(DS323x::AlarmSel::A2, DS323x::DYDT::DAY);
-    rtc.ampm(DS323x::AlarmSel::A2, DS323x::AMPM::PM);
+    rtc.format(DS323x::AlarmSel::A2, DS323x::Format::HOUR_24);
+    rtc.dydt(DS323x::AlarmSel::A2, DS323x::DYDT::DYDT_DAY);
+    rtc.ampm(DS323x::AlarmSel::A2, DS323x::AMPM::AMPM_PM);
     rtc.day(DS323x::AlarmSel::A2, 12);
     rtc.hour(DS323x::AlarmSel::A2, 23);
     rtc.minute(DS323x::AlarmSel::A2, 45);

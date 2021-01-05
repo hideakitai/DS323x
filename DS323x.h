@@ -62,9 +62,9 @@ namespace ds323x {
             LSB_TEMP
         };
 
-        enum class Format : uint8_t { H24, H12 };
-        enum class AMPM : uint8_t { AM, PM };
-        enum class DYDT : uint8_t { DATE, DAY };
+        enum class Format : uint8_t { HOUR_24, HOUR_12 };
+        enum class AMPM : uint8_t { AMPM_AM, AMPM_PM };
+        enum class DYDT : uint8_t { DYDT_DATE, DYDT_DAY };
         enum class A1Rate : uint8_t
         {
             EVERY_SECOND,
@@ -95,11 +95,11 @@ namespace ds323x {
         void attach(WireType& w)
         {
             wire = &w;
-            mask_hour    = (format() == Format::H12) ? MASK_HOUR_12H : MASK_HOUR_24H;
-            mask_a1_hour = (format(AlarmSel::A1) == Format::H12) ? MASK_HOUR_12H : MASK_HOUR_24H;
-            mask_a2_hour = (format(AlarmSel::A2) == Format::H12) ? MASK_HOUR_12H : MASK_HOUR_24H;
-            mask_a1_dydt = (dydt(AlarmSel::A1) == DYDT::DAY) ? MASK_ALARM_DAY : MASK_ALARM_DATE;
-            mask_a2_dydt = (dydt(AlarmSel::A2) == DYDT::DAY) ? MASK_ALARM_DAY : MASK_ALARM_DATE;
+            mask_hour    = (format() == Format::HOUR_12) ? MASK_HOUR_12H : MASK_HOUR_24H;
+            mask_a1_hour = (format(AlarmSel::A1) == Format::HOUR_12) ? MASK_HOUR_12H : MASK_HOUR_24H;
+            mask_a2_hour = (format(AlarmSel::A2) == Format::HOUR_12) ? MASK_HOUR_12H : MASK_HOUR_24H;
+            mask_a1_dydt = (dydt(AlarmSel::A1) == DYDT::DYDT_DAY) ? MASK_ALARM_DAY : MASK_ALARM_DATE;
+            mask_a2_dydt = (dydt(AlarmSel::A2) == DYDT::DYDT_DAY) ? MASK_ALARM_DAY : MASK_ALARM_DATE;
         }
 
 
@@ -114,8 +114,8 @@ namespace ds323x {
         uint8_t day() { return bcd_to_dec(readByte(Reg::DATE)); }
         uint8_t month() { return (bcd_to_dec(readByte(Reg::MONTH_CENTURY, MASK_MONTH))) ; }
         uint8_t year() { return bcd_to_dec(readByte(Reg::YEAR)); }
-        AMPM ampm() { return readBit(Reg::HOURS, 5) ? AMPM::PM : AMPM::AM; }
-        Format format() { return readBit(Reg::HOURS, 6) ? Format::H12 : Format::H24; }
+        AMPM ampm() { return readBit(Reg::HOURS, 5) ? AMPM::AMPM_PM : AMPM::AMPM_AM; }
+        Format format() { return readBit(Reg::HOURS, 6) ? Format::HOUR_12 : Format::HOUR_24; }
 
 
         // rtc setters
@@ -175,17 +175,17 @@ namespace ds323x {
         AMPM ampm(const AlarmSel a)
         {
             Reg r = (a == AlarmSel::A1) ? Reg::A1_HOURS : Reg::A2_HOURS;
-            return readBit(r, 5) ? AMPM::PM : AMPM::AM;
+            return readBit(r, 5) ? AMPM::AMPM_PM : AMPM::AMPM_AM;
         }
         Format format(const AlarmSel a)
         {
             Reg r = (a == AlarmSel::A1) ? Reg::A1_HOURS : Reg::A2_HOURS;
-            return readBit(r, 6) ? Format::H12 : Format::H24;
+            return readBit(r, 6) ? Format::HOUR_12 : Format::HOUR_24;
         }
         DYDT dydt(const AlarmSel a)
         {
             Reg r = (a == AlarmSel::A1) ? Reg::A1_DAY_DATE : Reg::A2_DAY_DATE;
-            return readBit(r, 6) ? DYDT::DAY : DYDT::DATE;
+            return readBit(r, 6) ? DYDT::DYDT_DAY : DYDT::DYDT_DATE;
         }
         bool a1m1() { return readBit(Reg::A1_SECONDS, 7)  != 0; }
         bool a1m2() { return readBit(Reg::A1_MINUTES, 7)  != 0; }
@@ -290,7 +290,7 @@ namespace ds323x {
                 b &= a1m2(false);
                 b &= a1m3(false);
                 b &= a1m4(false);
-                b &= dydt(AlarmSel::A1, DYDT::DATE);
+                b &= dydt(AlarmSel::A1, DYDT::DYDT_DATE);
             }
             else if (a == A1Rate::MATCH_SECOND_MINUTE_HOUR_DAY)
             {
@@ -298,7 +298,7 @@ namespace ds323x {
                 b &= a1m2(false);
                 b &= a1m3(false);
                 b &= a1m4(false);
-                b &= dydt(AlarmSel::A1, DYDT::DAY);
+                b &= dydt(AlarmSel::A1, DYDT::DYDT_DAY);
             }
 
             return b;
@@ -332,14 +332,14 @@ namespace ds323x {
                 b &= a2m2(false);
                 b &= a2m3(false);
                 b &= a2m4(false);
-                b &= dydt(AlarmSel::A2, DYDT::DATE);
+                b &= dydt(AlarmSel::A2, DYDT::DYDT_DATE);
             }
             else if (a == A2Rate::MATCH_MINUTE_HOUR_DAY)
             {
                 b &= a2m2(false);
                 b &= a2m3(false);
                 b &= a2m4(false);
-                b &= dydt(AlarmSel::A2, DYDT::DAY);
+                b &= dydt(AlarmSel::A2, DYDT::DYDT_DAY);
             }
             return b;
         }
@@ -422,8 +422,8 @@ namespace ds323x {
             else if (!a1m1 && !a1m2 && !a1m3 &&  a1m4) return A1Rate::MATCH_SECOND_MINUTE_HOUR;
             else if (!a1m1 && !a1m2 && !a1m3 && !a1m4)
             {
-                if (dydt == DYDT::DATE) return A1Rate::MATCH_SECOND_MINUTE_HOUR_DATE;
-                else                    return A1Rate::MATCH_SECOND_MINUTE_HOUR_DAY;
+                if (dydt == DYDT::DYDT_DATE) return A1Rate::MATCH_SECOND_MINUTE_HOUR_DATE;
+                else                         return A1Rate::MATCH_SECOND_MINUTE_HOUR_DAY;
             }
             else
                 // won't come here
@@ -437,8 +437,8 @@ namespace ds323x {
             else if (!a2m2 && !a2m3 &&  a2m4) return A2Rate::MATCH_MINUTE_HOUR;
             else if (!a2m2 && !a2m3 && !a2m4)
             {
-                if (dydt == DYDT::DATE) return A2Rate::MATCH_MINUTE_HOUR_DATE;
-                else                    return A2Rate::MATCH_MINUTE_HOUR_DAY;
+                if (dydt == DYDT::DYDT_DATE) return A2Rate::MATCH_MINUTE_HOUR_DATE;
+                else                         return A2Rate::MATCH_MINUTE_HOUR_DAY;
             }
             else
                 // won't come here
