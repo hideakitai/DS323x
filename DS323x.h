@@ -412,7 +412,7 @@ namespace ds323x {
         float temperature() {
             uint8_t val = readByte(Reg::MSB_TEMP);
             bool sign = bool(val & 0x80);
-            float temp = float(sign ? -(~val + 1) : val);
+            float temp = float(sign ? -((uint8_t)~val + 1) : val);
             temp += float(readByte(Reg::LSB_TEMP) >> 6) * 0.25f;
             return temp;
         }
