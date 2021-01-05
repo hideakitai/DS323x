@@ -186,7 +186,7 @@
 
         String timestamp(timestampOpt opt = TIMESTAMP_FULL)
         {
-            char buffer[20];
+            char buffer[25];
 
             // Generate timestamp according to opt
             switch (opt) {
@@ -196,11 +196,11 @@
                 break;
             case TIMESTAMP_DATE:
                 // Only date
-                sprintf(buffer, "%d-%02d-%02d", 2000 + yOff, m, d);
+                sprintf(buffer, "%04d-%02d-%02d", 2000 + yOff, m, d);
                 break;
             default:
                 // Full
-                sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000 + yOff, m, d, hh, mm,
+                sprintf(buffer, "%04d-%02d-%02dT%02d:%02d:%02d", 2000 + yOff, m, d, hh, mm,
                         ss);
             }
             return String(buffer);
