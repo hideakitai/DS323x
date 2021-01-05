@@ -80,9 +80,9 @@ void loop()
 ## Configurations
 
 ``` C++
-enum class Format : uint8_t { H24, H12 };
-enum class AMPM : uint8_t { AM, PM };
-enum class DYDT : uint8_t { DATE, DAY };
+enum class Format : uint8_t { HOUR_24, HOUR_12 };
+enum class AMPM : uint8_t { AMPM_AM, AMPM_PM };
+enum class DYDT : uint8_t { DYDT_DATE, DYDT_DAY };
 enum class A1Rate : uint8_t
 {
     EVERY_SECOND,
